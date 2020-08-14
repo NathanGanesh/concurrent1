@@ -24,7 +24,6 @@ public class Thread  extends java.lang.Thread {
     public void run() {
         System.out.println("Thread no. "+k);
         try {
-//            webImages.add(new WebImage(webImage2));
             image = (new WebImage(webImage2));
         } catch (IOException e) {
             e.printStackTrace();

@@ -12,8 +12,8 @@ public class WebImagePrinter{
 
     public static void main(String[] args) {
         Instant first = Instant.now();
-        new WebImagePrinter().print("http://concurrency.anthonyvandenberg.nl/");
-        Refresh("http://concurrency.anthonyvandenberg.nl/");
+//        new WebImagePrinter().print("http://concurrency.anthonyvandenberg.nl/"); //74Seconden
+        Refresh("http://concurrency.anthonyvandenberg.nl/"); //22 seconden
 
         Instant second = Instant.now();
         Duration duration = Duration.between(first, second);
@@ -25,9 +25,9 @@ public class WebImagePrinter{
         ArrayList<WebImage> webImages = new ArrayList<WebImage>();
         ArrayList<Thread> threads = new ArrayList<>();
         int threadIndex =1;
-        for (String image: images){
-            System.out.println("Loading " + image);
-            Thread temp = new Thread((location + "/" + image), threadIndex);
+        for (int i = 0; i < 3; i++) {
+            System.out.println("Loading " + images.get(i));
+            Thread temp = new Thread((location + "/" + images.get(i)), threadIndex);
             threads.add(temp);
             threadIndex++;
             temp.start();
@@ -45,9 +45,29 @@ public class WebImagePrinter{
                 e.printStackTrace();
             }
         }
+//        for (String image: images){
+//            System.out.println("Loading " + image);
+//            Thread temp = new Thread((location + "/" + image), threadIndex);
+//            threads.add(temp);
+//            threadIndex++;
+//            temp.start();
+//            try {
+//                temp.join(10);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        for (Thread thread : threads) {
+//            try {
+//                thread.join();
+//                webImages.add(thread.getImage());
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         PdfImageWriter pdfwriter = new PdfImageWriter(webImages);
-        pdfwriter.printToPdf("test.pdf");
+        pdfwriter.printToPdf("braka.pdf");
 
     }
 

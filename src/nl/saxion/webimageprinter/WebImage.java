@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class WebImage {
+public class WebImage   {
 
     private  String name;
     private  BufferedImage image;
@@ -38,7 +38,9 @@ public class WebImage {
         if (scale == 100) {
             return this.image;
         } else {
-            ArrayList<Thread> threads = new ArrayList<>();
+            ArrayList<CompressThread> threads = new ArrayList<>();
+            ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
+            int indexCounter = 0;
             int orignalWidth , originalHeight;
             orignalWidth = image.getWidth();
             originalHeight = image.getHeight();
@@ -50,13 +52,32 @@ public class WebImage {
             int blocky = originalHeight/scaledHeight;
             for(int x = 0; x < scaledWidth; x++) {
                 for (int y = 0; y < scaledHeight; y++) {
-                    int pixelColor = ImageFilters.BoxCompress(image,x * blockx , y * blocky,blockx,blocky);
-                    img.setRGB(x,y,pixelColor);
-
+                    //lets create a thread here.
+                    //parameters explained
+                    CompressThread temp = new CompressThread(image,x * blockx , y * blocky,blockx,blocky);
+                    threads.add(temp);
+//                    int pixelColor = ImageFilters.BoxCompress(image,x * blockx , y * blocky,blockx,blocky);
+//                    img.setRGB(x,y,pixelColor);
+                    temp.start();
+                    try {
+                        temp.join(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+            for (CompressThread thread : threads) {
+                try {
+                    thread.join();
+                    images.add(thread.getImage());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            indexCounter++;
 
-            return img;
+
+            return images.get(indexCounter);
         }
     }
 
